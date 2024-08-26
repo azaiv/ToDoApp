@@ -1,26 +1,32 @@
 import Foundation
 
 final class NetworkService {
-
-    func fetchTodos(completion: @escaping ([TaskEntity]) -> Void) {
-        var result: [TaskEntity] = []
+    
+    private let storageService = StorageService.shared
+    
+    func fetchTodos(callback: @escaping () -> ()) {
         
         guard let url = URL(string: Constants.URL.DUMMY_JSON) else {
-            completion(result)
+            callback()
             return
         }
-
+        
+        let todayDate = Date.now
         let session = URLSession.shared
         
         session.dataTask(with: url) { data, response, error in
             if let error = error {
                 print(error.localizedDescription)
-                completion(result)
+                DispatchQueue.main.async {
+                    callback()
+                }
                 return
             }
             
             guard let data = data else {
-                completion(result)
+                DispatchQueue.main.async {
+                    callback()
+                }
                 return
             }
             
@@ -30,21 +36,27 @@ final class NetworkService {
                     let todosResponse = try decoder.decode(DummyEntity.self, from: data)
                     
                     todosResponse.todos.forEach({ dummy in
-                        result.append(
-                            .init(id: UUID(),
-                                  title: dummy.todo,
-                                  isDone: dummy.completed))
+                        let task: TaskEntity = .init(
+                            id: UUID(),
+                            title: dummy.todo,
+                            creationDate: todayDate,
+                            isDone: dummy.completed)
+                        self.storageService.addTask(
+                            task: task,
+                            completion: { isSuccess in
+                                if !isSuccess {
+                                    return
+                                }
+                            })
                     })
                     
-                    DispatchQueue.main.async {
-                        completion(result)
-                    }
+                    UserDefaults.standard.setValue(true, forKey: "isLoadedDummyJSON")
                     
                 } catch {
                     print(error.localizedDescription)
-                    DispatchQueue.main.async {
-                        completion(result)
-                    }
+                }
+                DispatchQueue.main.async {
+                    callback()
                 }
             }
         }

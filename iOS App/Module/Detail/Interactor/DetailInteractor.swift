@@ -7,7 +7,7 @@ protocol DetailInteractorProtocol: AnyObject {
 class DetailInteractor: DetailInteractorProtocol {
 
     weak var presenter: DetailPresenterProtocol?
-    
+   
     var taskEntity: TaskEntity?
     
     init(taskEntity: TaskEntity?) {

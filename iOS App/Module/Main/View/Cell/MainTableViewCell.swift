@@ -33,6 +33,8 @@ final class MainTableViewCell: UITableViewCell {
         return button
     }()
     
+    var isDone: Bool = false
+    
     var doneAction: (() -> ())?
     
     private let dateFormatter: DateFormatter = {
@@ -42,9 +44,16 @@ final class MainTableViewCell: UITableViewCell {
         return dateFormatter
     }()
     
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        doneButton.setImage(!isDone ? UIImage(systemName: "circle") : UIImage(systemName: "checkmark.circle.fill"), for: .normal)
+        doneButton.tintColor = !isDone ? .systemGray5 : .systemBlue
+    }
+    
 
     public func configure(task: TaskEntity) {
-        
+        isDone = task.isDone
         selectionStyle = .none
         
         contentView.addSubview(titleLabel)
@@ -73,12 +82,11 @@ final class MainTableViewCell: UITableViewCell {
         titleLabel.text = task.title
         detailLabel.text = task.details
         dateLabel.text = task.creationDate != nil ? dateFormatter.string(from: task.creationDate!) : ""
-        doneButton.setImage(!task.isDone ? UIImage(systemName: "circle") : UIImage(systemName: "checkmark.circle.fill"), for: .normal)
-        doneButton.tintColor = !task.isDone ? .systemGray5 : .systemBlue
         doneButton.addTarget(self, action: #selector(doneTappedAction), for: .touchUpInside)
     }
     
     @objc private func doneTappedAction() {
+        layoutIfNeeded()
         doneAction?()
     }
     

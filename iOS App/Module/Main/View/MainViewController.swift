@@ -16,7 +16,7 @@ class MainViewController: UIViewController {
     
     private var dataSource: DataSource! = nil
     private var snapshot: Snapshot! = nil
-
+    
     var presenter: MainPresenterProtocol?
     var tasks: [TaskEntity] = []
     var todos: DummyEntity?
@@ -97,16 +97,16 @@ class MainViewController: UIViewController {
     private func configureDataSource() {
         dataSource = DataSource(tableView: tableView, cellProvider: { tableView, indexPath, item in
             switch item {
-            case .task(let items):
+            case .task(var item):
                 guard let cell = tableView.dequeueReusableCell(withIdentifier: MainTableViewCell.stringID, for: indexPath) as? MainTableViewCell
                 else {
                     return UITableViewCell()
                 }
-                cell.configure(task: items)
+                cell.configure(task: item)
                 cell.doneAction = {
-                    var task = items
-                    task.isDone.toggle()
-                    self.presenter?.didTappedDoneTask(task: task)
+                    item.isDone.toggle()
+                    cell.isDone = item.isDone
+                    self.presenter?.didTappedDoneTask(task: item)
                 }
                 return cell
             }
@@ -161,7 +161,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController: UITableViewDelegate {
     
-    func tableView(_ tableView: UITableView, 
+    func tableView(_ tableView: UITableView,
                    trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
         
         guard let taskItem = dataSource.itemIdentifier(for: indexPath) else { return nil }
@@ -186,7 +186,7 @@ extension MainViewController: UITableViewDelegate {
         return .init(actions: [deleteAction, editAction])
     }
     
-    func tableView(_ tableView: UITableView, 
+    func tableView(_ tableView: UITableView,
                    viewForHeaderInSection section: Int) -> UIView? {
         
         let section = Sections.allCases[section]
@@ -201,7 +201,7 @@ extension MainViewController: UITableViewDelegate {
         }
         return header
     }
-
+    
 }
 
 extension MainViewController: UISearchBarDelegate, UISearchControllerDelegate {
@@ -237,5 +237,5 @@ extension MainViewController: MainViewProtocol {
         updatedTasks(tasks: tasks)
         activityIndicator.stopAnimating()
     }
-
+    
 }

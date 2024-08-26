@@ -2,7 +2,6 @@ import Foundation
 
 protocol MainPresenterProtocol: AnyObject {
     func viewDidLoaded()
-    func didLoadDummy(todos: DummyEntity?)
     func didLoadTasks(tasks: [TaskEntity])
     func didTappedAddTask()
     func didTappedEditTask(task: TaskEntity)
@@ -27,20 +26,11 @@ class MainPresenter {
 extension MainPresenter: MainPresenterProtocol {
 
     func viewDidLoaded() {
-        if !UserDefaults.standard.bool(forKey: "isFirstStart") {
+        if !UserDefaults.standard.bool(forKey: "isLoadedDummyJSON") {
             interactor.loadDummyJson()
         } else {
             interactor.loadTasks()
         }
-        
-        UserDefaults.standard.setValue(true, forKey: "isFirstStart")
-    }
-    
-    func didLoadDummy(todos: DummyEntity?) {
-        guard let todos = todos else {
-            return
-        }
-        view?.showDummy(todos: todos)
     }
     
     func didLoadTasks(tasks: [TaskEntity]) {

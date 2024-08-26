@@ -1,8 +1,8 @@
 import UIKit
 
-final class CustomButton: UIButton {
+final class CustomButton: UIButton {    
     
-    init(title: String) {
+    init(title: String? = nil) {
         super.init(frame: .zero)
         self.setTitle(title, for: .normal)
         self.setTitleColor(.white, for: .normal)

@@ -27,8 +27,7 @@ class DetailPresenter {
 extension DetailPresenter: DetailPresenterProtocol {
 
     func viewDidLoaded() {
-        let task = interactor.getTask()
-//        view
+        interactor.getTask()
     }
     
     func didTappedSaveTask(task: TaskEntity) {

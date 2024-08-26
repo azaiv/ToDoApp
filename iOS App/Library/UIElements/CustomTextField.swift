@@ -12,7 +12,7 @@ class CustomTextField: UITextField {
     
     override func layoutSubviews() {
         super.layoutSubviews()
-        
+        self.contentVerticalAlignment = .top
         self.layer.masksToBounds = true
         self.layer.cornerRadius = 8
         self.layer.cornerCurve = .continuous

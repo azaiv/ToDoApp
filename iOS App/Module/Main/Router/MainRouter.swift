@@ -11,6 +11,11 @@ class MainRouter: MainRouterProtocol {
     
     func detailVC(task: TaskEntity?) {
         let detailVC = DetailModuleBuilder.build(task: task)
+        if let sheetController = detailVC.sheetPresentationController {
+            sheetController.detents = [.medium(), .large()]
+            sheetController.preferredCornerRadius = 22
+            sheetController.prefersGrabberVisible = true
+        }
         viewController?.present(detailVC, animated: true)
     }
     

@@ -22,8 +22,10 @@ class MainInteractor: MainInteractorProtocol {
     var tasks: [TaskEntity] = []
     
     func loadDummyJson() {
-        networkService.fetchTodos(completion: { [weak self] todos in
-            self?.presenter?.didLoadTasks(tasks: todos)
+        networkService.fetchTodos(callback: { [weak self] in
+            self?.storageService.fetchTasks(completion: { tasks in
+                self?.presenter?.didLoadTasks(tasks: tasks)
+            })
         })
     }
     
