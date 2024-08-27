@@ -16,6 +16,7 @@ class StorageService {
         backgroundQueue.async {
             self.context.perform {
                 let taskObject = TaskObject(context: self.context)
+                
                 taskObject.id = task.id
                 taskObject.title = task.title
                 taskObject.details = task.details
@@ -85,6 +86,7 @@ class StorageService {
                     taskObject.id = task.id
                     taskObject.title = task.title
                     taskObject.details = task.details
+                    taskObject.creationDate = task.creationDate
                     taskObject.isDone = task.isDone
 
                     try self.context.save()

@@ -1,0 +1,26 @@
+// - MARK: Main Scene
+
+"main navigation title" = "Задания";
+
+"main section header not done tasks" = "Не выполнено";
+
+"main section header done tasks" = "Выполнено";
+
+"main row remove title" = "Удалить";
+
+
+// - MARK: Detail Scene
+
+"detail navigation title create" = "Создать";
+
+"detail navigation title update" = "Изменить";
+
+"detail section header title" = "Название";
+
+"detail section header description" = "Описание";
+
+"detail row date title" = "Дата:";
+
+"detail button save title" = "Сохранить";
+
+"detail button edit title" = "Изменить";

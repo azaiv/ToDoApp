@@ -1,8 +1,17 @@
 import Foundation
 
-enum Sections: CaseIterable {
+enum MainSections: CaseIterable {
     case notDone
     case isDone
+    
+    var headerTitle: String {
+        switch self {
+        case .notDone:
+            Texts.Main.NOT_COMPLETED_HEADER
+        case .isDone:
+            Texts.Main.COMPLETED_HEADER
+        }
+    }
 }
 
 enum TaskItem: Hashable {
@@ -10,6 +19,6 @@ enum TaskItem: Hashable {
 }
 
 struct MainSection: Hashable {
-    let type: Sections
+    let type: MainSections
     let item: [TaskItem]
 }

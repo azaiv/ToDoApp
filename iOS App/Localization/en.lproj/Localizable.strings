@@ -1,0 +1,26 @@
+// - MARK: Main Scene
+
+"main navigation title" = "Tasks";
+
+"main section header not done tasks" = "Not completed";
+
+"main section header done tasks" = "Completed";
+
+"main row remove title" = "Remove";
+
+
+// - MARK: Detail Scene
+
+"detail navigation title create" = "Create task";
+
+"detail navigation title update" = "Edit task";
+
+"detail section header title" = "Title";
+
+"detail section header description" = "Description";
+
+"detail row date title" = "Date:";
+
+"detail button save title" = "Save";
+
+"detail button edit title" = "Edit";

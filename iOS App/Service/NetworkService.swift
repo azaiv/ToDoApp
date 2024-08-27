@@ -11,7 +11,6 @@ final class NetworkService {
             return
         }
         
-        let todayDate = Date.now
         let session = URLSession.shared
         
         session.dataTask(with: url) { data, response, error in
@@ -39,7 +38,6 @@ final class NetworkService {
                         let task: TaskEntity = .init(
                             id: UUID(),
                             title: dummy.todo,
-                            creationDate: todayDate,
                             isDone: dummy.completed)
                         self.storageService.addTask(
                             task: task,
@@ -50,7 +48,7 @@ final class NetworkService {
                             })
                     })
                     
-                    UserDefaults.standard.setValue(true, forKey: "isLoadedDummyJSON")
+                    UserDefaults.standard.setValue(true, forKey: Constants.Defaults.IS_LOADED_DUMMY)
                     
                 } catch {
                     print(error.localizedDescription)

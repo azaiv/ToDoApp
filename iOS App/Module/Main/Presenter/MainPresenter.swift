@@ -15,8 +15,8 @@ class MainPresenter {
     var router: MainRouterProtocol
     var interactor: MainInteractorProtocol
     
-    
-    init(router: MainRouterProtocol, interactor: MainInteractorProtocol) {
+    init(router: MainRouterProtocol, 
+         interactor: MainInteractorProtocol) {
         self.router = router
         self.interactor = interactor
     }
@@ -26,7 +26,7 @@ class MainPresenter {
 extension MainPresenter: MainPresenterProtocol {
 
     func viewDidLoaded() {
-        if !UserDefaults.standard.bool(forKey: "isLoadedDummyJSON") {
+        if !UserDefaults.standard.bool(forKey: Constants.Defaults.IS_LOADED_DUMMY) {
             interactor.loadDummyJson()
         } else {
             interactor.loadTasks()
@@ -46,7 +46,7 @@ extension MainPresenter: MainPresenterProtocol {
     }
     
     func didTappedAddTask() {
-        router.detailVC(task: interactor.task)
+        router.detailVC(task: nil)
     }
     
     func didTappedDoneTask(task: TaskEntity) {

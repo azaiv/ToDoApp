@@ -2,6 +2,7 @@ import UIKit
 
 protocol DetailViewProtocol: AnyObject {
     
+    func show(isEditable: Bool, task: TaskEntity)
     
 }
 
@@ -17,7 +18,8 @@ class DetailViewController: UIViewController {
     
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
-        tableView.register(DetailCell.self, forCellReuseIdentifier: DetailCell.stringID)
+        tableView.register(DetailTextFieldCell.self, forCellReuseIdentifier: DetailTextFieldCell.stringID)
+        tableView.register(DetailDateCell.self, forCellReuseIdentifier: DetailDateCell.stringID)
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: "defaultHeader")
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableView.automaticDimension
@@ -25,28 +27,18 @@ class DetailViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
-    private lazy var saveButton = CustomButton(title: "Save")
+    private lazy var saveButton = CustomButton()
     private lazy var closeButton = UIButton(type: .close)
     
-    private var taskTitle: String = "" {
-        didSet {
-            DispatchQueue.main.async {
-                self.saveButton.isEnabled = !self.taskTitle.isEmpty
-            }
-        }
-    }
-    private var taskDetail: String = ""
+    private var task: TaskEntity!
+    private var isEditable: Bool!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         presenter?.viewDidLoaded()
+        
         setupView()
-    }
-    
-    override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-  
-        self.saveButton.isEnabled = !taskTitle.isEmpty
     }
 
     private func setupView() {
@@ -68,11 +60,18 @@ class DetailViewController: UIViewController {
         ])
         
         self.navigationItem.rightBarButtonItem = .init(customView: closeButton)
-        self.title = "Task"
+        self.title = self.isEditable ? Texts.Detail.NAVIGATION_TITLE_EDIT : Texts.Detail.NAVIGATION_TITLE_CREATE
+        self.saveButton.setTitle(
+            self.isEditable ? Texts.Detail.BUTTONT_EDIT_TITLE : Texts.Detail.BUTTON_SAVE_TITLE,
+            for: .normal)
+        self.saveButton.isEnabled = !self.task.title.isEmpty
+        
         closeButton.addTarget(self, action: #selector(dismissController), for: .touchUpInside)
-        saveButton.addTarget(self, action: #selector(saveTaskAndDismiss), for: .touchUpInside)
+        saveButton.addTarget(self, action: #selector(didTappedDetailButton), for: .touchUpInside)
+        
         configureDataSource()
         applySnapshot()
+        hideKeyboardWhenTappedAround()
         
     }
     
@@ -80,12 +79,19 @@ class DetailViewController: UIViewController {
         dataSource = DataSource(tableView: tableView, cellProvider: { tableView, indexPath, item in
             switch item {
             case .task(_ , let text):
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailCell.stringID, for: indexPath) as? DetailCell else {
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailTextFieldCell.stringID, for: indexPath) as? DetailTextFieldCell else {
                     return UITableViewCell()
                 }
                 cell.textView.tag = self.dataSource.sectionIdentifier(for: indexPath.section) == .title ? 0 : 1
                 cell.cellDelegate = self
                 cell.configure(text: text)
+                return cell
+            case .date(_ , text: let date):
+                guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailDateCell.stringID, for: indexPath) as? DetailDateCell else {
+                    return UITableViewCell()
+                }
+                cell.configure(date: date)
+                cell.cellDelegate = self
                 return cell
             }
         })
@@ -95,29 +101,30 @@ class DetailViewController: UIViewController {
     
     private func applySnapshot() {
         snapshot = Snapshot()
-        
-        let task = presenter?.getTaskEntity()
-        
-        snapshot.appendSections([.title, .description])
-        snapshot.appendItems([.task(id: UUID(), text: task?.title ?? "")], toSection: .title)
-        snapshot.appendItems([.task(id: UUID(), text: task?.details ?? "")], toSection: .description)
+
+        snapshot.appendSections([.title, .description, .date])
+        snapshot.appendItems([.task(id: UUID(), text: self.task.title)], toSection: .title)
+        snapshot.appendItems([.task(id: UUID(), text: self.task.details ?? "")], toSection: .description)
+        snapshot.appendItems([.date(id: UUID(), text: self.task.creationDate ?? .now)], toSection: .date)
         
         dataSource.apply(snapshot)
     }
     
-    @objc private func saveTaskAndDismiss() {
-        presenter?.didTappedSaveTask(
-            task: .init(id: UUID(),
-                        title: taskTitle,
-                        details: taskDetail,
-                        creationDate: .now,
-                        isDone: false))
+    @objc private func didTappedDetailButton() {
+
+        if self.isEditable {
+            presenter?.didTappedUpdateTask(
+                task: self.task)
+        } else {
+            presenter?.didTappedSaveTask(
+                task: self.task)
+        }
+
     }
     
     @objc private func dismissController() {
         presenter?.didTappedCloseVC()
     }
-    
     
 }
 
@@ -126,26 +133,16 @@ extension DetailViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView,
                    viewForHeaderInSection section: Int) -> UIView? {
         
-        let section = dataSource.sectionIdentifier(for: section)
-        
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "defaultHeader") else { return nil }
-        
-        switch section {
-        case .title:
-            header.textLabel?.text = "Title"
-        case .description:
-            header.textLabel?.text = "Description"
-        case .none:
-            return nil
-        }
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "defaultHeader")
+        header?.textLabel?.text = dataSource.sectionIdentifier(for: section)?.headerTitle
         return header
     }
     
 }
 
-extension DetailViewController: DetailCellProtocol {
+extension DetailViewController: DetailCellTextFieldProtocol {
 
-    func updateHeightOfRow(_ cell: DetailCell, _ textView: UITextView) {
+    func updateHeightOfRow(_ cell: DetailTextFieldCell, _ textView: UITextView) {
         let size = textView.bounds.size
         let newSize = tableView.sizeThatFits(CGSize(width: size.width,
                                                     height: CGFloat.greatestFiniteMagnitude))
@@ -161,17 +158,35 @@ extension DetailViewController: DetailCellProtocol {
     }
     
     func getTitle(text: String) {
-        self.taskTitle = text
+        self.task.title = text
+        
+        DispatchQueue.main.async {
+            self.saveButton.isEnabled = !self.task.title.isEmpty
+        }
     }
     
     func getDetail(text: String) {
-        self.taskDetail = text
+        self.task.details = text
+    }
+    
+}
+
+extension DetailViewController: DetailDateCellProtocol {
+    
+    func getDate(date: Date) {
+        self.task.creationDate = date
     }
     
 }
 
 
 extension DetailViewController: DetailViewProtocol {
+    
+    func show(isEditable: Bool,
+              task: TaskEntity) {
+        self.isEditable = isEditable
+        self.task = task
+    }
     
 }
 

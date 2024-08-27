@@ -1,14 +1,12 @@
 import Foundation
 
 protocol MainInteractorProtocol: AnyObject {
-    
-    var task: TaskEntity? { get }
-    var tasks: [TaskEntity] { get set }
-    
+
     func loadDummyJson()
     func loadTasks()
     func doneTask(task: TaskEntity)
     func removeTask(task: TaskEntity)
+    
 }
 
 class MainInteractor: MainInteractorProtocol {
@@ -17,10 +15,7 @@ class MainInteractor: MainInteractorProtocol {
     
     private let networkService = NetworkService()
     private let storageService = StorageService.shared
-    
-    var task: TaskEntity? = nil
-    var tasks: [TaskEntity] = []
-    
+
     func loadDummyJson() {
         networkService.fetchTodos(callback: { [weak self] in
             self?.storageService.fetchTasks(completion: { tasks in

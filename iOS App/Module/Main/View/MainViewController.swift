@@ -4,15 +4,14 @@ protocol MainViewProtocol: AnyObject {
     
     var todos: DummyEntity? { get set }
     
-    func showDummy(todos: DummyEntity)
     func showTasks(tasks: [TaskEntity])
     
 }
 
 class MainViewController: UIViewController {
     
-    typealias DataSource = UITableViewDiffableDataSource<Sections, TaskItem>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Sections, TaskItem>
+    typealias DataSource = UITableViewDiffableDataSource<MainSections, TaskItem>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<MainSections, TaskItem>
     
     private var dataSource: DataSource! = nil
     private var snapshot: Snapshot! = nil
@@ -52,7 +51,7 @@ class MainViewController: UIViewController {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateTasks),
-            name: .init("addedTask"),
+            name: .init("updateTable"),
             object: nil)
     }
     
@@ -80,7 +79,7 @@ class MainViewController: UIViewController {
         
         activityIndicator.startAnimating()
         
-        self.title = "To Do App"
+        self.title = Texts.Main.NAVIGATION_TITLE
         self.navigationItem.rightBarButtonItem = .init(customView: addTaskButton)
         self.navigationItem.searchController = searchBarController
         
@@ -166,39 +165,37 @@ extension MainViewController: UITableViewDelegate {
         
         guard let taskItem = dataSource.itemIdentifier(for: indexPath) else { return nil }
         
-        let editAction = UIContextualAction(style: .normal, title: "Edit") { [weak self] (action, view, completion) in
-            switch taskItem {
-            case .task(let task):
-                self?.presenter?.didTappedEditTask(task: task)
+        let editAction = UIContextualAction(
+            style: .normal,
+            title: Texts.Detail.BUTTONT_EDIT_TITLE) { [weak self] (action, view, completion) in
+                switch taskItem {
+                case .task(let task):
+                    self?.presenter?.didTappedEditTask(task: task)
+                }
+                completion(true)
             }
-        }
         
         editAction.backgroundColor = .systemBlue
         
-        let deleteAction = UIContextualAction(style: .destructive, title: "Remove") { [weak self] (action, view, completion) in
+        let deleteAction = UIContextualAction(
+            style: .destructive,
+            title: Texts.Main.ROW_REMOVE_TITLE) { [weak self] (action, view, completion) in
+                
             switch taskItem {
             case .task(let task):
                 self?.presenter?.didTappedRemoveTask(task: task)
             }
         }
         
-        
         return .init(actions: [deleteAction, editAction])
+
     }
     
     func tableView(_ tableView: UITableView,
                    viewForHeaderInSection section: Int) -> UIView? {
-        
-        let section = Sections.allCases[section]
-        
-        guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "defaultHeader") else { return nil }
-        
-        switch section {
-        case .isDone:
-            header.textLabel?.text = "Done"
-        case .notDone:
-            header.textLabel?.text = "Not done"
-        }
+
+        let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: "defaultHeader")
+        header?.textLabel?.text = dataSource.sectionIdentifier(for: section)?.headerTitle
         return header
     }
     
@@ -225,12 +222,7 @@ extension MainViewController: UISearchBarDelegate, UISearchControllerDelegate {
 
 
 extension MainViewController: MainViewProtocol {
-    
-    func showDummy(todos: DummyEntity) {
-        self.todos = todos
-        tableView.reloadData()
-        activityIndicator.stopAnimating()
-    }
+
     
     func showTasks(tasks: [TaskEntity]) {
         self.tasks = tasks

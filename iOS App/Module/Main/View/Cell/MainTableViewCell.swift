@@ -54,6 +54,7 @@ final class MainTableViewCell: UITableViewCell {
 
     public func configure(task: TaskEntity) {
         isDone = task.isDone
+        
         selectionStyle = .none
         
         contentView.addSubview(titleLabel)
@@ -82,6 +83,7 @@ final class MainTableViewCell: UITableViewCell {
         titleLabel.text = task.title
         detailLabel.text = task.details
         dateLabel.text = task.creationDate != nil ? dateFormatter.string(from: task.creationDate!) : ""
+        dateLabel.textColor = task.creationDate != nil ? (task.creationDate! > .now ? UIColor.label : UIColor.systemRed) : UIColor.label
         doneButton.addTarget(self, action: #selector(doneTappedAction), for: .touchUpInside)
     }
     
