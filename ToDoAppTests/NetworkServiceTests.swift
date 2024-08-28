@@ -22,7 +22,6 @@ final class NetworkServiceTests: XCTestCase {
         
         networkService.fetchTodos {
             self.storageService.fetchTasks { tasks in
-                print(tasks.count, 2)
                 self.dummy = tasks
                 expectation.fulfill()
             }

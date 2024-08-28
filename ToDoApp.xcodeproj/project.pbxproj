@@ -18,6 +18,7 @@
 		550CEA6A2C7A069B00F4D4FC /* MainTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 550CEA692C7A069B00F4D4FC /* MainTableViewCell.swift */; };
 		5542FB482C7F137C0002D975 /* NetworkServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5542FB472C7F137C0002D975 /* NetworkServiceTests.swift */; };
 		5542FB4F2C7F15E70002D975 /* StorageServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5542FB4E2C7F15E70002D975 /* StorageServiceTests.swift */; };
+		5542FB512C7F24660002D975 /* todos.json in Resources */ = {isa = PBXBuildFile; fileRef = 5542FB502C7F24660002D975 /* todos.json */; };
 		55453EC72C7DE40100CE7430 /* Texts.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55453EC62C7DE40100CE7430 /* Texts.swift */; };
 		55453ECC2C7DE43400CE7430 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 55453ECA2C7DE43400CE7430 /* Localizable.strings */; };
 		55453ED22C7DEB6E00CE7430 /* UIViewController + Ext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55453ED12C7DEB6E00CE7430 /* UIViewController + Ext.swift */; };
@@ -64,6 +65,7 @@
 		5542FB452C7F137C0002D975 /* ToDoAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ToDoAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5542FB472C7F137C0002D975 /* NetworkServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServiceTests.swift; sourceTree = "<group>"; };
 		5542FB4E2C7F15E70002D975 /* StorageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageServiceTests.swift; sourceTree = "<group>"; };
+		5542FB502C7F24660002D975 /* todos.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = todos.json; sourceTree = "<group>"; };
 		55453EC62C7DE40100CE7430 /* Texts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Texts.swift; sourceTree = "<group>"; };
 		55453ECB2C7DE43400CE7430 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		55453ECD2C7DE43900CE7430 /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -215,6 +217,7 @@
 		558159002C78E1A100536FD0 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				5542FB502C7F24660002D975 /* todos.json */,
 				558158F42C78DFB400536FD0 /* Assets.xcassets */,
 				558158F62C78DFB400536FD0 /* LaunchScreen.storyboard */,
 				558158F92C78DFB400536FD0 /* Info.plist */,
@@ -473,6 +476,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				558158F52C78DFB400536FD0 /* Assets.xcassets in Resources */,
+				5542FB512C7F24660002D975 /* todos.json in Resources */,
 				55453ECC2C7DE43400CE7430 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
