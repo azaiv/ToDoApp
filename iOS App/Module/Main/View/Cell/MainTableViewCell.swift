@@ -64,6 +64,7 @@ final class MainTableViewCell: UITableViewCell {
         
         NSLayoutConstraint.activate([
             doneButton.centerYAnchor.constraint(equalTo: contentView.readableContentGuide.centerYAnchor),
+            doneButton.widthAnchor.constraint(equalToConstant: 25),
             doneButton.trailingAnchor.constraint(equalTo: contentView.readableContentGuide.trailingAnchor),
             
             titleLabel.topAnchor.constraint(equalTo: contentView.readableContentGuide.topAnchor),
