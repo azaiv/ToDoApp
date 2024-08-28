@@ -16,7 +16,7 @@ extension TaskObject {
     @NSManaged public var id: UUID
     @NSManaged public var title: String
     @NSManaged public var details: String?
-    @NSManaged public var creationDate: Date?
+    @NSManaged public var creationDate: Date
     @NSManaged public var isDone: Bool
 
 }

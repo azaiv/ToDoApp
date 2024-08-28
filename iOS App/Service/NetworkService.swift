@@ -13,6 +13,8 @@ final class NetworkService {
         
         let session = URLSession.shared
         
+        let today: Date = .now
+        
         session.dataTask(with: url) { data, response, error in
             if let error = error {
                 print(error.localizedDescription)
@@ -35,10 +37,13 @@ final class NetworkService {
                     let todosResponse = try decoder.decode(DummyEntity.self, from: data)
                     
                     todosResponse.todos.forEach({ dummy in
+                        
                         let task: TaskEntity = .init(
                             id: UUID(),
                             title: dummy.todo,
+                            creationDate: today,
                             isDone: dummy.completed)
+                        
                         self.storageService.addTask(
                             task: task,
                             completion: { isSuccess in

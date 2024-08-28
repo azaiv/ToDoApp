@@ -19,7 +19,6 @@ class DetailViewController: UIViewController {
     private lazy var tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .insetGrouped)
         tableView.register(DetailTextFieldCell.self, forCellReuseIdentifier: DetailTextFieldCell.stringID)
-        tableView.register(DetailDateCell.self, forCellReuseIdentifier: DetailDateCell.stringID)
         tableView.register(UITableViewHeaderFooterView.self, forHeaderFooterViewReuseIdentifier: "defaultHeader")
         tableView.estimatedRowHeight = 100
         tableView.rowHeight = UITableView.automaticDimension
@@ -86,13 +85,6 @@ class DetailViewController: UIViewController {
                 cell.cellDelegate = self
                 cell.configure(text: text)
                 return cell
-            case .date(_ , text: let date):
-                guard let cell = tableView.dequeueReusableCell(withIdentifier: DetailDateCell.stringID, for: indexPath) as? DetailDateCell else {
-                    return UITableViewCell()
-                }
-                cell.configure(date: date)
-                cell.cellDelegate = self
-                return cell
             }
         })
         
@@ -102,10 +94,9 @@ class DetailViewController: UIViewController {
     private func applySnapshot() {
         snapshot = Snapshot()
 
-        snapshot.appendSections([.title, .description, .date])
+        snapshot.appendSections([.title, .description])
         snapshot.appendItems([.task(id: UUID(), text: self.task.title)], toSection: .title)
         snapshot.appendItems([.task(id: UUID(), text: self.task.details ?? "")], toSection: .description)
-        snapshot.appendItems([.date(id: UUID(), text: self.task.creationDate ?? .now)], toSection: .date)
         
         dataSource.apply(snapshot)
     }
@@ -167,14 +158,6 @@ extension DetailViewController: DetailCellTextFieldProtocol {
     
     func getDetail(text: String) {
         self.task.details = text
-    }
-    
-}
-
-extension DetailViewController: DetailDateCellProtocol {
-    
-    func getDate(date: Date) {
-        self.task.creationDate = date
     }
     
 }

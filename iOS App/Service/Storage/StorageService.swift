@@ -55,7 +55,7 @@ class StorageService {
                                   isDone: task.isDone))
                     })
                     DispatchQueue.main.async {
-                        completion(taskEntity)
+                        completion(taskEntity.sorted(by: { $1.creationDate < $0.creationDate }))
                     }
                 } catch {
                     print(error.localizedDescription)

@@ -81,9 +81,10 @@ final class MainTableViewCell: UITableViewCell {
         ])
         
         titleLabel.text = task.title
+        
         detailLabel.text = task.details
-        dateLabel.text = task.creationDate != nil ? dateFormatter.string(from: task.creationDate!) : ""
-        dateLabel.textColor = task.creationDate != nil ? (task.creationDate! > .now ? UIColor.label : UIColor.systemRed) : UIColor.label
+        dateLabel.text = dateFormatter.string(from: task.creationDate)
+        
         doneButton.addTarget(self, action: #selector(doneTappedAction), for: .touchUpInside)
     }
     
